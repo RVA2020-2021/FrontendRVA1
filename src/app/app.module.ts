@@ -22,7 +22,16 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table'
 import { HttpClientModule } from '@angular/common/http';
-import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+
+import { ArtiklDialogComponent } from './components/dialogs/artikl-dialog/artikl-dialog.component';
+import { DobavljacDialogComponent } from './components/dialogs/dobavljac-dialog/dobavljac-dialog.component'
+
 
 @NgModule({
   declarations: [
@@ -35,7 +44,9 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     ArtiklComponent,
     DobavljacComponent,
     PorudzbinaComponent,
-    StavkaPorudzbineComponent
+    StavkaPorudzbineComponent,
+    ArtiklDialogComponent,
+    DobavljacDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -49,7 +60,12 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     MatExpansionModule,
     MatTableModule,
     HttpClientModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatInputModule
 
 
   ],
