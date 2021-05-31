@@ -1,5 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { Dobavljac } from 'src/app/models/dobavljac';
@@ -17,7 +19,11 @@ export class PorudzbinaComponent implements OnInit, OnDestroy {
   displayedColumns = ['id', 'datum', 'isporuceno', 'iznos', 'placeno', 'dobavljac', 'actions'];
   dataSource : MatTableDataSource<Porudzbina>
   subscription: Subscription;
+  selektovanaPorudzbina: Porudzbina;
 
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  
   constructor(private porudzbinaService: PorudzbinaService,
             private dialog: MatDialog) { }
  
@@ -32,6 +38,28 @@ export class PorudzbinaComponent implements OnInit, OnDestroy {
     this.subscription = this.porudzbinaService.getAllPorudzbine().subscribe(
       data => {
         this.dataSource = new MatTableDataSource(data);
+
+         // pretraga po nazivu ugnježdenog objekta
+         this.dataSource.filterPredicate = (data, filter: string) => {
+          const accumulator = (currentTerm, key) => {
+            return key === 'dobavljac' ? currentTerm + data.dobavljac.naziv : currentTerm + data[key];
+          };
+          const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+          const transformedFilter = filter.trim().toLowerCase();
+          return dataStr.indexOf(transformedFilter) !== -1;
+        };
+
+        // sortiranje po nazivu ugnježdenog objekta
+        this.dataSource.sortingDataAccessor = (data, property) => {
+          switch (property) {
+            case 'dobavljac': return data.dobavljac.naziv.toLocaleLowerCase();
+            default: return data[property];
+          }
+        };
+        
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+
       }
     ),
     (error : Error) => {
@@ -54,7 +82,15 @@ export class PorudzbinaComponent implements OnInit, OnDestroy {
     })
   }
   selectRow(row) {
-    console.log(row);
+    //console.log(row);
+    this.selektovanaPorudzbina = row;
+  }
+  applyFilter(filterValue: string) {
+  
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.dataSource.filter = filterValue;
+
   }
 
 }

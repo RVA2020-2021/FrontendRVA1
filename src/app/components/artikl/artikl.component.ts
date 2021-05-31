@@ -1,5 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { Artikl } from 'src/app/models/artikl';
@@ -17,6 +19,10 @@ export class ArtiklComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<Artikl>;
   subscription: Subscription;
 
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+
+
   constructor(private artiklService: ArtiklService,
               private dialog: MatDialog) { }
   
@@ -32,6 +38,8 @@ export class ArtiklComponent implements OnInit, OnDestroy {
     this.subscription = this.artiklService.getAllArtikls().subscribe(
       data => {
         this.dataSource = new MatTableDataSource(data);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
       }
 
     ),
@@ -49,6 +57,13 @@ export class ArtiklComponent implements OnInit, OnDestroy {
         this.loadData();
       }
     })
+  }
+  applyFilter(filterValue: string) {
+  
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.dataSource.filter = filterValue;
+
   }
 
 
